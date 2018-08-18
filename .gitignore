@@ -1,0 +1,8 @@
+logs/*
+doc/*._*
+*DS_Store
+doc/*DS_Store
+api/*DS_Store
+nginx/*DS_Store
+*.idea*
+*.iml
