@@ -198,6 +198,21 @@ CREATE TABLE `t_status_stat` (
   PRIMARY KEY (`device_id`, `stat_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 MAX_ROWS=1000000 AVG_ROW_LENGTH=8000;
 
+-- 状态统计
+CREATE TABLE `t_running_stat` (
+  `id` INT  NOT NULL AUTO_INCREMENT  COMMENT 'id',
+  `running` INT NOT NULL DEFAULT 0 COMMENT '运行设备数量',
+  `close` INT NOT NULL DEFAULT 0 COMMENT '关闭设备数量' ,
+  `online` INT NOT NULL DEFAULT 0 COMMENT '在线设备数量' ,
+  `offline` INT NOT NULL DEFAULT 0 COMMENT '离线设备数量' ,
+  `platform_id` varchar(128) NOT NULL DEFAULT '' COMMENT '平台ID',
+  `platform_name` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '平台名称',
+  `update_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `create_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',    
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 MAX_ROWS=100000 AVG_ROW_LENGTH=1000;
+
+
 -- 楼宇统计表
 CREATE TABLE `t_building_stat` (
   `building_id` varchar(128) NOT NULL DEFAULT '' COMMENT '建筑id',

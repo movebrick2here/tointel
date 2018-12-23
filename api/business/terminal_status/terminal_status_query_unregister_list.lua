@@ -103,6 +103,7 @@ function business:make_order()
     local order = {}
     -- 设置按时间排序 1 DES 2 ASC
     order.update_time = 1
+    order.device_id = 2
     return order
 end
 

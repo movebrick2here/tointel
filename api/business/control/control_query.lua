@@ -101,6 +101,10 @@ function business:make_conditions(tbl)
         conditions.item_tbl.building_name = tbl.building_name .. " LIKE"
     end
 
+    if nil ~= tbl.control_status then
+        conditions.item_tbl.control_status = tbl.control_status
+    end
+
     local util = require "util"
     local num = util:table_length(conditions.item_tbl)
     if 0 >= num then
@@ -117,6 +121,37 @@ function business:make_conditions(tbl)
 end
 
 -- #########################################################################################################
+-- 函数名: make_order
+-- 函数功能: 封装排序对象
+-- 参数定义:
+-- 无:
+-- 返回值:
+-- order: 排序对象,包含需要排序的字段和升降序
+-- #########################################################################################################
+function business:make_order()
+    local order = {}
+    -- 设置按时间排序 1 DES 2 ASC
+    order.update_time = 1
+    order.device_id = 2
+    return order
+end
+
+-- #########################################################################################################
+-- 函数名: make_pages
+-- 函数功能: 封装分页对象
+-- 参数定义:
+-- tbl: table对象 记录值,key-value形式对
+-- 返回值:
+-- pages: 分页对象,包含分页码和页大小
+-- #########################################################################################################
+function business:make_pages(tbl)
+    local pages = {}
+    pages.page_number = tbl.page_number
+    pages.page_size = tbl.page_size
+    return pages
+end
+
+-- #########################################################################################################
 -- 函数名: do_action
 -- 函数功能: 查询单条记录
 -- 参数定义:
@@ -130,6 +165,9 @@ function business:do_action(tbl)
     -- 封装条件
     local conditions = business:make_conditions(tbl)
 
+    local order = business:make_order()
+    local pages = business:make_pages(tbl)
+
     -- 查询记录
     local columns = { "control_id", "terminal_id", "device_id", "building_id", "building_name", "dept_id", "dept_name",
         "air_id", "air_name", "command", "control_status",  "create_time", "update_time" }
@@ -140,7 +178,7 @@ function business:do_action(tbl)
     local LOG = require "log"
     local cjson = require "cjson"
     LOG:DEBUG("query table:" .. table_name .. " condition:" .. cjson.encode(tbl))
-    local result,info = dao:query(configure.DBCService, table_name, columns, conditions)
+    local result,info = dao:query(configure.DBCService, table_name, columns, conditions, pages, order)
     if false == result then
         LOG:ERROR("query table:" .. table_name .. " condition:" .. cjson.encode(tbl) .. " failed msg:" .. info)
         return false,info
@@ -153,7 +191,7 @@ function business:do_action(tbl)
 
     business:results_string_to_number(info)
 
-    return true, info.list
+    return true, info
 end
 
 return business
