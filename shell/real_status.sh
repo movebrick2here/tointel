@@ -25,7 +25,7 @@ function DelDeviceRealStatus() {
 function DoDeviceRealStatus() {
   DEVICE_ID=$1
 
-  SQL="insert into t_real_status (select * from t_status where device_id=${DEVICE_ID} order by status_time desc limit 1)"
+  SQL="insert into t_real_status (select * from t_status where device_id=${DEVICE_ID} order by status_time desc limit 1) ON DUPLICATE KEY UPDATE device_id=${DEVICE_ID};"
 
   MYSQL="mysql -h $HOST -P $PORT -D $DATABASE -u $USER -p$PASSWORD --default-character-set=utf8 -A -N"
 
@@ -46,7 +46,7 @@ function DoRealStatus() {
 
     for ITEM in ${VALUES}
     do
-        `DelDeviceRealStatus ${ITEM}`
+#        `DelDeviceRealStatus ${ITEM}`
         `DoDeviceRealStatus ${ITEM}`
     done
 }

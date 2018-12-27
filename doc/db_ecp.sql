@@ -477,20 +477,20 @@ CREATE TRIGGER ADD_REAL_STATUS_FOR_TERMINAL
 after INSERT ON t_terminal
 FOR each row
 BEGIN
-  INSERT INTO t_real_status value(NEW.device_id, 0, 0, 0, 0, 0, 0, 0, 0, NEW.create_time, NEW.platform_id, NEW.platform_name, NEW.update_time, NEW.create_time);
+  INSERT INTO t_real_status(device_id,run_mode,running,temp,window,human,door,consumption,total_consumption,humidity,status_time,platform_id,platform_name,update_time,create_time) value(NEW.device_id, 0, 0, 0, 0, 0, 0, 0, 0, 0, NEW.create_time, NEW.platform_id, NEW.platform_name, NEW.update_time, NEW.create_time) ON DUPLICATE KEY UPDATE device_id=NEW.device_id;
 END
 &&
 DELIMITER ;
 
 #################################################################################################################
-  
+
 # CREATE TRIGGER FOR TABLE t_status
 DELIMITER &&
 CREATE TRIGGER ADD_REAL_STATUS_FOR_STATUS
 after INSERT ON t_status
 FOR each row
 BEGIN
-  UPDATE t_real_status set run_mode=NEW.run_mode,running=NEW.running,temp=NEW.temp,window=NEW.window,human=NEW.human,door=NEW.door,consumption=NEW.consumption,total_consumption=NEW.total_consumption,humidity=NEW.humidity,status_time=NEW.status_time,update_time=NEW.update_time where device_id=NEW.device_id
+  INSERT INTO t_real_status(device_id, run_mode, running, temp, window, human, door, consumption, total_consumption, humidity, status_time, update_time) value(NEW.device_id, NEW.run_mode, NEW.running,NEW.temp, NEW.window,NEW.human,NEW.door,NEW.consumption,NEW.total_consumption,NEW.humidity,NEW.status_time,NEW.update_time) ON DUPLICATE KEY UPDATE device_id=NEW.device_id;
 END
 &&
 DELIMITER ;
