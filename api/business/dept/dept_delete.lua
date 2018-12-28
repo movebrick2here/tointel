@@ -136,7 +136,7 @@ function business:do_action(ids)
     local dao = require "dao"
     local LOG = require "log"
     LOG:DEBUG("delete table:t_dept" .. " sql:" .. sql)
-    --local result,errmsg = dao:execute_by_sql(configure.DBCService, sql)
+    local result,errmsg = dao:execute_by_sql(configure.DBCService, sql)
 
     return result, errmsg
 end
