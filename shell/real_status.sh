@@ -25,8 +25,8 @@ function DelDeviceRealStatus() {
 function DoDeviceRealStatus() {
   DEVICE_ID=$1
 
-  SQL="insert into t_real_status (select * from t_status where device_id=${DEVICE_ID} order by status_time desc limit 1) ON DUPLICATE KEY UPDATE device_id=${DEVICE_ID};"
-
+#  SQL="insert into t_real_status (select * from t_status where device_id=${DEVICE_ID} order by status_time desc limit 1) ON DUPLICATE KEY UPDATE device_id=${DEVICE_ID};"
+  SQL="insert into t_real_status(device_id,run_mode,running,temp,window,human,door,consumption,total_consumption,humidity,status_time,platform_id,platform_name,update_time,create_time) (select t.device_id,t.run_mode,t.running,t.temp,t.window,t.human,t.door,t.consumption,t.total_consumption,t.humidity,t.status_time,t.platform_id,t.platform_name,t.update_time,t.create_time from t_status t where t.device_id=${DEVICE_ID} order by status_time desc limit 1) ON DUPLICATE KEY UPDATE device_id=t.device_id,run_mode=t.run_mode,running=t.running,temp=t.temp,window=t.window,human=t.human,door=t.door,consumption=t.consumption,total_consumption=t.total_consumption,humidity=t.humidity,status_time=t.status_time,update_time=${TIMESTAMP};"
   MYSQL="mysql -h $HOST -P $PORT -D $DATABASE -u $USER -p$PASSWORD --default-character-set=utf8 -A -N"
 
   VALUES=`$MYSQL -e "$SQL" --skip-column-names`  

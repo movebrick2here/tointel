@@ -330,13 +330,27 @@ CREATE VIEW `v_terminal_info` AS SELECT  t_terminal.terminal_name as terminal_na
                                     t_system_param.back_ip as back_ip, t_system_param.ssid as ssid,
                                     t_system_param.ssid_password as ssid_password,
                                     t_system_param.status_interval as status_interval
-                          FROM t_terminal, t_air_condition, t_building, t_dept, t_etc, t_rule, t_system_param
-                          WHERE (t_terminal.air_id = t_air_condition.air_id)
-                                and (t_building.building_id = t_terminal.building_id)
-                                and (t_dept.dept_id = t_terminal.dept_id)
-                                and (t_etc.etc_id = t_terminal.etc_id)
-                                and (t_rule.rule_id = t_terminal.rule_id)
-                                and (t_system_param.platform_id = t_terminal.platform_id)
+                          FROM t_terminal 
+                          LEFT JOIN t_air_condition on t_terminal.air_id = t_air_condition.air_id
+                          LEFT JOIN t_building on t_building.building_id = t_terminal.building_id
+                          LEFT JOIN t_dept on t_dept.dept_id = t_terminal.dept_id
+                          LEFT JOIN t_etc on t_etc.etc_id = t_terminal.etc_id
+                          LEFT JOIN t_rule on t_rule.rule_id = t_terminal.rule_id
+                          LEFT JOIN t_system_param on t_system_param.platform_id = t_terminal.platform_id
+&&
+DELIMITER;
+
+
+DELIMITER &&
+CREATE VIEW `v_unregister_terminal` AS SELECT  t_terminal.terminal_name as terminal_name,
+                                    t_terminal.terminal_id as terminal_id, t_terminal.device_id as device_id,
+                                    t_terminal.air_buy_date as air_buy_date, t_terminal.maintenance_records as maintenance_records,
+                                    t_terminal.description as description,
+                                    t_terminal.terminal_sn as terminal_sn, t_terminal.terminal_version as terminal_version,
+                                    t_terminal.platform_id as platform_id, t_terminal.platform_name as platform_name,
+                                    t_terminal.update_time as update_time, t_terminal.create_time as create_time
+                          FROM t_terminal
+                          WHERE t_terminal.building_id = '' and t_terminal.dept_id = '' 
 &&
 DELIMITER;
 
@@ -426,13 +440,14 @@ CREATE VIEW `v_terminal_real_status` AS SELECT  t_terminal.terminal_name as term
                                     t_real_status.door as door, t_real_status.consumption as consumption,
                                     t_real_status.total_consumption as total_consumption,
                                     t_real_status.humidity as humidity, t_real_status.status_time as status_time
-                          FROM t_terminal, t_air_condition, t_building, t_dept, t_real_status, t_etc, t_rule
-                          WHERE (t_terminal.air_id = t_air_condition.air_id)
-                                and (t_building.building_id = t_terminal.building_id)
-                                and (t_dept.dept_id = t_terminal.dept_id)
-                                and (t_real_status.device_id = t_terminal.device_id)
-                                and (t_etc.etc_id = t_terminal.etc_id)
-                                and (t_rule.rule_id = t_terminal.rule_id)
+                          FROM t_terminal
+                          LEFT JOIN t_air_condition on t_terminal.air_id = t_air_condition.air_id
+                          LEFT JOIN t_building on t_building.building_id = t_terminal.building_id
+                          LEFT JOIN t_dept on t_dept.dept_id = t_terminal.dept_id
+                          LEFT JOIN t_etc on t_etc.etc_id = t_terminal.etc_id
+                          LEFT JOIN t_rule on t_rule.rule_id = t_terminal.rule_id
+                          LEFT JOIN t_system_param on t_system_param.platform_id = t_terminal.platform_id
+                          LEFT JOIN t_real_status on t_real_status.device_id = t_terminal.device_id
 &&
 DELIMITER ;
 

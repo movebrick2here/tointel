@@ -65,15 +65,15 @@ end
 function business:do_action(tbl)
 
     -- 检查名称是否重复
-    local check = require "dept_check"
-    local result,errmsg = check:name_is_exists(tbl.dept_name)
-    if true == result then
-        return false, "数据库中已有名称:".. tbl.dept_name .. "的记录"
-    end
+    -- local check = require "dept_check"
+    -- local result,errmsg = check:name_is_exists(tbl.dept_name)
+    -- if true == result then
+    --     return false, "数据库中已有名称:".. tbl.dept_name .. "的记录"
+    -- end
 
-    if false == result and nil ~= errmsg then
-        return false, errmsg
-    end
+    -- if false == result and nil ~= errmsg then
+    --     return false, errmsg
+    -- end
 
     -- 添加时间戳
     business:add_timestamp(tbl)

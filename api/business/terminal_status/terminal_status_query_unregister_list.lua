@@ -68,12 +68,6 @@ end
 function business:make_conditions(tbl)
     local conditions = { item_tbl = {}, op_tbl = {} }
 
-    conditions.item_tbl.air_id = ""
-    conditions.item_tbl.etc_id = ""
-    conditions.item_tbl.rule_id = ""
-    conditions.item_tbl.building_id = ""
-    conditions.item_tbl.dept_id = ""
-
     conditions.item_tbl.device_id = "0" .. " NE"
 
     local util = require "util"
@@ -142,7 +136,7 @@ function business:do_action(tbl)
     -- 查询
     local configure = require "configure"
     local dao = require "dao"
-    local table_name = configure.DBCService.DB .. ".t_terminal"
+    local table_name = configure.DBCService.DB .. ".v_unregister_terminal"
     local LOG = require "log"
     local cjson = require "cjson"
     LOG:DEBUG("query table:" .. table_name .. " value:" .. cjson.encode(tbl))
