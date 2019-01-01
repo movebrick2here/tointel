@@ -340,6 +340,47 @@ CREATE VIEW `v_terminal_info` AS SELECT  t_terminal.terminal_name as terminal_na
 &&
 DELIMITER;
 
+DELIMITER &&
+CREATE VIEW `v_register_terminal` AS SELECT  t_terminal.terminal_name as terminal_name,
+                                    t_terminal.terminal_id as terminal_id, t_terminal.device_id as device_id,
+                                    t_air_condition.air_id as air_id, t_air_condition.air_name as air_name,
+                                    t_air_condition.pi as air_pi, t_air_condition.power as air_power,
+                                    t_air_condition.brand as air_brand, t_air_condition.factory as air_factory,
+                                    t_air_condition.air_model as air_model,
+                                    t_building.building_id as building_id, t_building.building_name as building_name,
+                                    t_building.parent_id as building_parent_id,
+                                    t_dept.dept_id as dept_id, t_dept.dept_name as dept_name,
+                                    t_dept.parent_id as dept_parent_id,
+                                    t_terminal.air_buy_date as air_buy_date, t_terminal.maintenance_records as maintenance_records,
+                                    t_terminal.description as description,
+                                    t_terminal.terminal_sn as terminal_sn, t_terminal.terminal_version as terminal_version,
+                                    t_etc.etc_id as etc_id, t_etc.etc_name as etc_name,
+                                    t_etc.max_heat as max_heat,
+                                    t_etc.min_heat as min_heat, t_etc.mid_heat as mid_heat,
+                                    t_etc.max_cool as max_cool, t_etc.min_cool as min_cool,
+                                    t_etc.mid_cool as mid_cool,
+                                    t_etc.max_humidity as max_humidity, t_etc.min_humidity as min_humidity,
+                                    t_etc.etc_mode as etc_mode,
+                                    t_rule.rule_id as rule_id, t_rule.rule_name as rule_name,
+                                    t_rule.rule_content as rule_content,
+                                    t_terminal.platform_id as platform_id, t_terminal.platform_name as platform_name,
+                                    t_terminal.update_time as update_time, t_terminal.create_time as create_time,
+                                    t_system_param.platform_domain as platform_domain, t_system_param.ip as ip, t_system_param.port as port,
+                                    t_system_param.back_ip as back_ip, t_system_param.ssid as ssid,
+                                    t_system_param.ssid_password as ssid_password,
+                                    t_system_param.status_interval as status_interval
+                          FROM t_terminal 
+                          LEFT JOIN t_air_condition on t_terminal.air_id = t_air_condition.air_id
+                          LEFT JOIN t_building on t_building.building_id = t_terminal.building_id
+                          LEFT JOIN t_dept on t_dept.dept_id = t_terminal.dept_id
+                          LEFT JOIN t_etc on t_etc.etc_id = t_terminal.etc_id
+                          LEFT JOIN t_rule on t_rule.rule_id = t_terminal.rule_id
+                          LEFT JOIN t_system_param on t_system_param.platform_id = t_terminal.platform_id
+
+                          WHERE t_terminal.dept_id <> '' or t_terminal.building_id <> ''
+&&
+DELIMITER;
+
 
 DELIMITER &&
 CREATE VIEW `v_unregister_terminal` AS SELECT  t_terminal.terminal_name as terminal_name,

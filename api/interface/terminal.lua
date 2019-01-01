@@ -126,14 +126,26 @@ function check_add_params(tbl)
         return false, "请检查参数air_id.为必填且必须为字符型"
     end
 
-    if (nil == tbl["building_id"]) or
+    if (nil == tbl["building_id"]) and (nil == tbl["dept_id"]) then
+        return false, "部门和建筑必须填写一个"
+    end
+
+    if (nil ~= tbl["building_id"]) and
             ("string" ~= type(tbl["building_id"])) then
         return false, "请检查参数building_id.为必填且必须为字符型"
     end
 
-    if (nil == tbl["dept_id"]) or
+    if (nil == tbl["building_id"]) then
+        tbl["building_id"] = ""
+    end
+
+    if (nil ~= tbl["dept_id"]) and
             ("string" ~= type(tbl["dept_id"])) then
         return false, "请检查参数dept_id.为必填且必须为字符型"
+    end
+
+    if (nil == tbl["dept_id"]) then
+        tbl["dept_id"] = ""
     end
 
     if (nil == tbl["terminal_sn"]) or

@@ -183,7 +183,7 @@ function business:do_action(tbl)
     -- 查询
     local configure = require "configure"
     local dao = require "dao"
-    local table_name = configure.DBCService.DB .. ".v_terminal_info"
+    local table_name = configure.DBCService.DB .. ".v_register_terminal"
     local LOG = require "log"
     local cjson = require "cjson"
     LOG:DEBUG("query table:" .. table_name .. " value:" .. cjson.encode(tbl))
