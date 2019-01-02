@@ -64,6 +64,17 @@ function business:results_string_to_number(info)
             info.list[i]["status_time"] = tonumber(info.list[i].status_time)
         end
 
+        local math = require "math"
+        local time_obj = require "socket"
+    
+
+        if nil == info.list[i]["status_time"] or 
+            info.list[i]["status_time"] < math.ceil(time_obj.gettime()) - 5*60 then
+            info.list[i]["status"] = 2
+        else
+            info.list[i]["status"] = 1
+        end
+
 
         if ( nil ~= info.list[i].running) then
             info.list[i]["running"] = tonumber(info.list[i].running)
@@ -170,7 +181,17 @@ function business:make_conditions(tbl)
     end
 
     if nil ~= tbl.building_name then
-        conditions.item_tbl.building_name = tbl.building_name .. " LIKE"
+        local query = require "building_children"
+        local result, names = query:query_building_children(tbl.building_name)
+
+        if false == result then
+            conditions.item_tbl.building_name = tbl.building_name .. " LIKE"
+        else
+            local LOG = require "log"
+            LOG:DEBUG(" *****************************: " .. names)
+
+            conditions.item_tbl.building_name = names .. " IN"
+        end
     end
 
     local util = require "util"

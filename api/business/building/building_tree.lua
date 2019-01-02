@@ -78,6 +78,22 @@ function business:make_conditions(id)
 end
 
 -- #########################################################################################################
+-- 函数名: make_order
+-- 函数功能: 封装排序对象
+-- 参数定义:
+-- 无:
+-- 返回值:
+-- order: 排序对象,包含需要排序的字段和升降序
+-- #########################################################################################################
+function business:make_order()
+    local order = {}
+    -- 设置按时间排序 1 DES 2 ASC
+    order.update_time = 1
+    order.building_name = 2
+    return order
+end
+
+-- #########################################################################################################
 -- 函数名: get_parent_id
 -- 函数功能: 获取父ID
 -- 参数定义:
@@ -170,13 +186,15 @@ function business:do_action(id)
     -- 查询记录
     local columns = { "building_id", "building_name", "parent_id", "building_level", "building_f_tree", "description",  "create_time", "update_time" }
 
+    local order = business:make_order()
+
     local configure = require "configure"
     local dao = require "dao"
     local table_name = configure.DBCService.DB .. ".t_building"
     local LOG = require "log"
     local cjson = require "cjson"
     LOG:DEBUG("query table:" .. table_name .. " trees")
-    local result,info = dao:query(configure.DBCService, table_name, columns)
+    local result,info = dao:query(configure.DBCService, table_name, columns, nil, nil, order)
     if false == result then
         LOG:ERROR("query table:" .. table_name .. " building trees failed msg:" .. info)
         return false,info
