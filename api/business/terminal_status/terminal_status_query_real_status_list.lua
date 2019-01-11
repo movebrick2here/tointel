@@ -67,9 +67,9 @@ function business:results_string_to_number(info)
         local math = require "math"
         local time_obj = require "socket"
     
-
-        if nil == info.list[i]["status_time"] or 
-            info.list[i]["status_time"] < math.ceil(time_obj.gettime()) - 5*60 then
+        local configure = require "configure"
+        if (nil == info.list[i]["status_time"]) or 
+            (info.list[i]["status_time"] < math.ceil(time_obj.gettime()) - configure.OFFLINE) then
             info.list[i]["status"] = 2
         else
             info.list[i]["status"] = 1
@@ -78,6 +78,9 @@ function business:results_string_to_number(info)
 
         if ( nil ~= info.list[i].running) then
             info.list[i]["running"] = tonumber(info.list[i].running)
+            if info.list[i]["running"] ~= 1 then
+                info.list[i]["running"] = 2
+            end
         end
         if ( nil ~= info.list[i].temp) then
             info.list[i]["temp"] = tonumber(info.list[i].temp)

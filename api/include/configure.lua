@@ -16,4 +16,6 @@ Configure.PLATFORM = {}
 Configure.PLATFORM.ID = "1"
 Configure.PLATFORM.NAME = "tointel"
 
+Configure.OFFLINE = 1800
+
 return Configure

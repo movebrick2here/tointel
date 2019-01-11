@@ -176,7 +176,8 @@ function business:make_conditions(tbl)
     local time_obj = require "socket"
     tbl.update_time = math.ceil(time_obj.gettime())
 
-    conditions.item_tbl.status_time = tostring(math.ceil(time_obj.gettime()) - 5*60) .. " LT"
+    local configure = require "configure"
+    conditions.item_tbl.status_time = tostring(math.ceil(time_obj.gettime()) - configure.OFFLINE) .. " LT"
 
     local util = require "util"
     local num = util:table_length(conditions.item_tbl)
