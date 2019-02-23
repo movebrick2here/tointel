@@ -15,9 +15,18 @@ function business:results_string_to_number(info)
     local num = #info.list
     local cjson = require "cjson"
     for i = 1, num do
-        if ( nil ~= info.list[i].total_consumption) then
-            info.list[i]["total_consumption"] = tonumber(info.list[i].total_consumption)
+        if ( nil ~= info.list[i].running) then
+            info.list[i]["running"] = tonumber(info.list[i].running)
         end
+        if ( nil ~= info.list[i].close) then
+            info.list[i]["close"] = tonumber(info.list[i].close)
+        end
+        if ( nil ~= info.list[i].online) then
+            info.list[i]["online"] = tonumber(info.list[i].online)
+        end
+        if ( nil ~= info.list[i].offline) then
+            info.list[i]["offline"] = tonumber(info.list[i].offline)
+        end                        
     end
 end
 -- #########################################################################################################
@@ -32,12 +41,12 @@ end
 -- #########################################################################################################
 function business:do_action(tbl)
     -- 封装查询条件和排序字段以及分页
-    local columns = { "sum(total_consumption) as total_consumption" }
+    local columns = { "running", "close", "online", "offline" }
 
     -- 查询
     local configure = require "configure"
     local dao = require "dao"
-    local table_name = configure.DBCService.DB .. ".t_status_stat"
+    local table_name = configure.DBCService.DB .. ".t_running_stat"
     local LOG = require "log"
     local cjson = require "cjson"
     LOG:DEBUG("query table:" .. table_name .. " value:" .. cjson.encode(tbl))

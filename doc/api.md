@@ -71,6 +71,7 @@
 ### [16.4 部门平均能耗](#dept_mean_consumption)
 ### [16.5 建筑平均能耗](#building_mean_consumption)
 ### [16.6 总能耗](#total_consumption)
+### [16.7 状态统计](#status_stat)
 ## [17 系统参数管理](#system_param_manage)
 ### [17.1 系统参数增加](#system_param_add)
 ### [17.2 系统参数修改](#system_param_update)
@@ -3810,7 +3811,45 @@
 	"data": {
 	    "total_consumption": 300000
 	 }
-   }         
+   }    
+
+
+### 16.7 状态统计 status_stat <a name="status_stat"/>        
+* 请求URL:http://${DOMAIN}/interface/stat/status_stat
+* 请求字段:
+
+| 名称  | 类型 | 必填 | 描述 |
+| :--------| ----:| ----:| :--- |
+
+
+* 应答字段
+
+| 名称  | 类型 | 必填 | 描述 |
+| :--------| ----:| ----:| :--- |
+| code |  int  | 是 | 状态码 |
+| msg |  string  | 否 | 失败时的提示信息 |
+| data |  json object  | 是 | 对象信息 |
+
+* data字段
+
+| 名称  | 类型 | 必填 | 描述 |
+| :--------| ----:| ----:| :--- |
+| close | int | 是 | 关闭数量 |
+| running | int | 是 | 运行数量 |
+| offline | int | 是 | 离线数量 |
+| online | int | 是 | 在线数量 |
+
+* 请求示例
+   >{
+  }
+
+* 应答示例
+  >{
+  "msg": "",
+  "code": 0,
+  "data":
+      {"close":497,"running":27,"offline":470,"online":81}
+   }    
 
 ## 17.系统参数管理 <a name="system_param_manage"/>
 ### 17.1 系统参数增加 add <a name="system_param_add"/>
@@ -3915,7 +3954,7 @@
   >{
 	   "msg": "",
 	   "code": 0
-   }
+   } 
    
 ### 17.4 系统参数查询 query <a name="system_param_query"/>
 * 请求URL:http://${DOMAIN}/interface/system_param/query

@@ -526,6 +526,23 @@ CREATE VIEW `v_terminal_status_stat` AS SELECT  t_terminal.terminal_name as term
 &&
 DELIMITER ;
 
+
+DELIMITER &&
+CREATE VIEW `v_building_stat` AS SELECT  t_building_stat.building_id as building_id,
+                                    t_building.building_name as building_name, t_building_stat.running_time as running_time,
+                                    t_building_stat.human_time as human_time, t_building_stat.door_time as door_time,
+                                    t_building_stat.window_time as window_time,
+                                    t_building_stat.temp as temp, t_building_stat.humidity as humidity,
+                                    t_building_stat.consumption as consumption, t_building_stat.hour_consumption as hour_consumption,
+                                    t_building_stat.stat_time as stat_time, t_building_stat.total_consumption as total_consumption,
+                                    t_building_stat.platform_id as platform_id, t_building_stat.platform_name as platform_name,
+                                    t_building_stat.update_time as update_time, t_building_stat.create_time as create_time,
+                                    t_building.building_level as building_level, t_building.parent_id as parent_id
+                          FROM t_building_stat, t_building
+                          WHERE t_building_stat.building_id = t_building.building_id
+&&
+DELIMITER;
+
 #################################################################################################################
 # CREATE TRIGGER FOR TABLE t_terminal
 DELIMITER &&

@@ -682,7 +682,17 @@ elseif OP == "total_consumption" then
     else
         response.code = ERR.USERINPUTFORMAT
         response.msg = errmsg
-    end        
+    end  
+
+elseif OP == "status_stat" then
+        local business = require "status_stat"
+        local result,info = business:do_action(tbl)
+        if false == result then
+            response.code = ERR.USERINPUTLOGICAL
+            response.msg = info
+        else
+            response.data = info
+        end          
 else
     response.code = ERR.USERINPUTFORMAT
     response.msg = "无效的请求命令:" .. OP

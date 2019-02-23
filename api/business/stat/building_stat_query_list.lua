@@ -47,16 +47,16 @@ function business:results_string_to_number(info)
             info.list[i]["running_time"] = tonumber(info.list[i].running_time)
         end
         
-        if ( nil ~= info.list[i].consumption) then
-            info.list[i]["consumption"] = tonumber(info.list[i].consumption)
+        if ( nil ~= info.list[i].door_time) then
+            info.list[i]["door_time"] = tonumber(info.list[i].door_time)
         end
 
-        if ( nil ~= info.list[i].hour_consumption) then
-            info.list[i]["hour_consumption"] = tonumber(info.list[i].hour_consumption)
+        if ( nil ~= info.list[i].human_time) then
+            info.list[i]["human_time"] = tonumber(info.list[i].human_time)
         end   
 
-        if ( nil ~= info.list[i].total_consumption) then
-            info.list[i]["total_consumption"] = tonumber(info.list[i].total_consumption)
+        if ( nil ~= info.list[i].window_time) then
+            info.list[i]["window_time"] = tonumber(info.list[i].window_time)
         end                 
 
         if ( nil ~= info.list[i].date) then
@@ -89,7 +89,9 @@ function business:make_conditions(tbl)
 
     if nil ~= tbl.building_name then
         conditions.item_tbl.building_name = tbl.building_name .. " LIKE"
-    end   
+    end  
+
+    conditions.building_level = tostring(0) .. " EQ" 
 
     conditions.item_tbl.stat_time = tostring(tbl.begin_time) .. " EGT"
     conditions.item_tbl.stat_time = tostring(tbl.end_time) .. " ELT"
@@ -120,7 +122,7 @@ end
 function business:make_order()
     local order = {}
     -- 设置按时间排序 1 DES 2 ASC
-    order.stat_time = 1
+    order.building_name = 1
     return order
 end
 
@@ -140,6 +142,20 @@ function business:make_pages(tbl)
 end
 
 -- #########################################################################################################
+-- 函数名: make_group
+-- 函数功能: 封装分页对象
+-- 参数定义:
+-- tbl: table对象 记录值,key-value形式对
+-- 返回值:
+-- pages: 分页对象,包含分页码和页大小
+-- #########################################################################################################
+function business:make_group(tbl)
+    local group = {}
+    group.building_id = 1
+    return group
+end
+
+-- #########################################################################################################
 -- 函数名: do_action
 -- 函数功能: 查询列表信息
 -- 参数定义:
@@ -151,19 +167,19 @@ end
 -- #########################################################################################################
 function business:do_action(tbl)
     -- 封装查询条件和排序字段以及分页
-    local columns = { "building_id", "building_name", "running_time", "hour_consumption", "consumption", "total_consumption", "stat_time as date", "create_time", "update_time" }
+    local columns = { "building_id", "building_name", "sum(running_time) as running_time", "sum(human_time) as human_time", "sum(door_time) as door_time", "sum(window_time) as window_time" }
     local conditions = business:make_conditions(tbl)
     local order = business:make_order()
-    local pages = business:make_pages(tbl)
+    local group = business:make_group()
 
     -- 查询
     local configure = require "configure"
     local dao = require "dao"
-    local table_name = configure.DBCService.DB .. ".t_building_stat"
+    local table_name = configure.DBCService.DB .. ".v_building_stat"
     local LOG = require "log"
     local cjson = require "cjson"
     LOG:DEBUG("query table:" .. table_name .. " value:" .. cjson.encode(tbl))
-    local result,info = dao:query(configure.DBCService, table_name, columns, conditions, pages, order)
+    local result,info = dao:query(configure.DBCService, table_name, columns, conditions, nil, order, group)
     if false == result then
         LOG:ERROR("query table:" .. table_name .. " value:" .. cjson.encode(tbl) .. " failed msg:" .. info)
         return false,info
@@ -176,7 +192,7 @@ function business:do_action(tbl)
 
     business:results_string_to_number(info)
 
-    return true, info
+    return true, info.list
 end
 
 return business
