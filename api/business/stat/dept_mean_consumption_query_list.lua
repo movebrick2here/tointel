@@ -29,6 +29,18 @@ function business:results_string_to_number(info)
         if ( nil ~= info.list[i].running_time) then
             info.list[i]["running_time"] = tonumber(info.list[i].running_time)
         end
+
+        if ( nil ~= info.list[i].door_time) then
+            info.list[i]["door_time"] = tonumber(info.list[i].door_time)
+        end
+
+        if ( nil ~= info.list[i].human_time) then
+            info.list[i]["human_time"] = tonumber(info.list[i].human_time)
+        end   
+
+        if ( nil ~= info.list[i].window_time) then
+            info.list[i]["window_time"] = tonumber(info.list[i].window_time)
+        end                         
         
         if ( nil ~= info.list[i].consumption) then
             info.list[i]["consumption"] = tonumber(info.list[i].consumption)
@@ -128,28 +140,30 @@ end
 -- info: 成功时返回,对象信息
 -- #########################################################################################################
 function business:do_action(tbl)
---    info.page_number = tbl.page_number
---    info.page_size = tbl.page_size
---    info.total_number = 1
+    -- 封装查询条件和排序字段以及分页
+    local columns = { "dept_id", "dept_name", "running_time", "human_time", "door_time", "window_time", "total_consumption" }
 
---    info.list = {}
+    -- 查询
+    local configure = require "configure"
+    local dao = require "dao"
+    local table_name = configure.DBCService.DB .. ".v_dept_mean_stat"
+    local LOG = require "log"
+    local cjson = require "cjson"
+    LOG:DEBUG("query table:" .. table_name .. " value:" .. cjson.encode(tbl))
+    local result,info = dao:query(configure.DBCService, table_name, columns)
+    if false == result then
+        LOG:ERROR("query table:" .. table_name .. " value:" .. cjson.encode(tbl) .. " failed msg:" .. info)
+        return false,info
+    end
 
-    local item = {}
+    LOG:DEBUG("query table:" .. table_name .. " value:" .. cjson.encode(tbl) .. " response:" .. cjson.encode(info))
+    if nil == info or nil == info.list or 0 >= #info.list then
+        return false, "数据库无记录"
+    end
 
-    item.dept_id = ""
-    item.dept_name = ""
-    
-    item.running = 6
-    item.running_time = 100
-    item.hour_consumption = 5
-    item.consumption = 20
-    item.total_consumption = 80
-    item.begin_time = tbl.begin_time
-    item.end_time = tbl.end_time
+    business:results_string_to_number(info)
 
---    table.insert(info.list, item)
-
-    return true, item
+    return true, info.list
 end
 
 return business

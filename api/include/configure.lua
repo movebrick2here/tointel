@@ -18,4 +18,11 @@ Configure.PLATFORM.NAME = "tointel"
 
 Configure.OFFLINE = 1800
 
+Configure.mysql = {}
+Configure.mysql.HOST = "127.0.0.1"
+Configure.mysql.PORT = "3306"
+Configure.mysql.DATABASE = "db_ecp_v2"
+Configure.mysql.USER = "root"
+Configure.mysql.PASSWORD = "ecp888888"
+
 return Configure

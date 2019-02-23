@@ -234,6 +234,18 @@ CREATE TABLE `t_building_stat` (
   PRIMARY KEY (`building_id`, `stat_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 MAX_ROWS=1000000 AVG_ROW_LENGTH=8000;
 
+
+-- 整栋建筑统计表
+CREATE TABLE `t_building_level_stat` (
+  `building_id` varchar(128) NOT NULL DEFAULT '' COMMENT '建筑id',
+  `building_name` varchar(128) NOT NULL DEFAULT '' COMMENT '建筑名称',
+  `running_time` int NOT NULL DEFAULT 0 COMMENT '一天运行时间' ,
+  `human_time` int NOT NULL DEFAULT 0 COMMENT '一天空调运行有人时间' ,
+  `door_time` int NOT NULL DEFAULT 0 COMMENT '一天空调运行开门时间' ,
+  `window_time` int NOT NULL DEFAULT 0 COMMENT '一天空调运行开窗时间',    
+  PRIMARY KEY (`building_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 MAX_ROWS=1000000 AVG_ROW_LENGTH=8000;
+
 -- 部门统计表
 CREATE TABLE `t_dept_stat` (
   `dept_id` varchar(128) NOT NULL DEFAULT '' COMMENT '部门id',
@@ -253,6 +265,19 @@ CREATE TABLE `t_dept_stat` (
   `update_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `create_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '创建时间',    
   PRIMARY KEY (`dept_id`, `stat_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 MAX_ROWS=1000000 AVG_ROW_LENGTH=8000;
+
+
+-- 部门平均统计表
+CREATE TABLE `t_dept_mean_stat` (
+  `dept_id` varchar(128) NOT NULL DEFAULT '' COMMENT '部门id',
+  `dept_name` varchar(128) NOT NULL DEFAULT '' COMMENT '部门名称',
+  `running_time` int NOT NULL DEFAULT 0 COMMENT '一天运行时间' ,
+  `human_time` int NOT NULL DEFAULT 0 COMMENT '一天空调运行有人时间' ,
+  `door_time` int NOT NULL DEFAULT 0 COMMENT '一天空调运行开门时间' ,
+  `window_time` int NOT NULL DEFAULT 0 COMMENT '一天空调运行开窗时间',
+  `total_consumption` INT NOT NULL DEFAULT 0 COMMENT '总能耗' ,   
+  PRIMARY KEY (`dept_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 MAX_ROWS=1000000 AVG_ROW_LENGTH=8000;
 
 -- 能耗参考标准
@@ -501,8 +526,10 @@ CREATE VIEW `v_terminal_status_stat` AS SELECT  t_terminal.terminal_name as term
                                     t_air_condition.air_model as air_model,
                                     t_building.building_id as building_id, t_building.building_name as building_name,
                                     t_building.parent_id as building_parent_id,
+                                    t_building.building_f_tree as building_f_tree,
                                     t_dept.dept_id as dept_id, t_dept.dept_name as dept_name,
                                     t_dept.parent_id as dept_parent_id,
+                                    t_dept.dept_f_tree as dept_f_tree,
                                     t_terminal.air_buy_date as air_buy_date, t_terminal.maintenance_records as maintenance_records,
                                     t_terminal.description as description,
                                     t_terminal.terminal_sn as terminal_sn, t_terminal.terminal_version as terminal_version,
@@ -537,9 +564,32 @@ CREATE VIEW `v_building_stat` AS SELECT  t_building_stat.building_id as building
                                     t_building_stat.stat_time as stat_time, t_building_stat.total_consumption as total_consumption,
                                     t_building_stat.platform_id as platform_id, t_building_stat.platform_name as platform_name,
                                     t_building_stat.update_time as update_time, t_building_stat.create_time as create_time,
-                                    t_building.building_level as building_level, t_building.parent_id as parent_id
+                                    t_building.building_level as building_level, t_building.parent_id as parent_id,
+                                    t_building.building_f_tree as building_f_tree
                           FROM t_building_stat, t_building
                           WHERE t_building_stat.building_id = t_building.building_id
+&&
+DELIMITER;
+
+
+DELIMITER &&
+CREATE VIEW `v_building_level_stat` AS SELECT  t_building_level_stat.building_id as building_id,
+                                    t_building.building_name as building_name, t_building_level_stat.running_time as running_time,
+                                    t_building_level_stat.human_time as human_time, t_building_level_stat.door_time as door_time,
+                                    t_building_level_stat.window_time as window_time
+                          FROM t_building_level_stat, t_building
+                          WHERE t_building_level_stat.building_id = t_building.building_id
+&&
+DELIMITER;
+
+DELIMITER &&
+CREATE VIEW `v_dept_mean_stat` AS SELECT  t_dept_mean_stat.dept_id as dept_id,
+                                    t_dept.dept_name as dept_name, t_dept_mean_stat.running_time as running_time,
+                                    t_dept_mean_stat.human_time as human_time, t_dept_mean_stat.door_time as door_time,
+                                    t_dept_mean_stat.window_time as window_time,
+                                    t_dept_mean_stat.total_consumption as total_consumption
+                          FROM t_dept_mean_stat, t_dept
+                          WHERE t_dept_mean_stat.dept_id = t_dept.dept_id
 &&
 DELIMITER;
 

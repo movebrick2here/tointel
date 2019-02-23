@@ -83,18 +83,7 @@ end
 function business:make_conditions(tbl)
     local conditions = { item_tbl = {}, op_tbl = {} }
 
-    if nil ~= tbl.building_id then
-        conditions.item_tbl.building_id = tbl.building_id
-    end
-
-    if nil ~= tbl.building_name then
-        conditions.item_tbl.building_name = tbl.building_name .. " LIKE"
-    end  
-
-    conditions.building_level = tostring(0) .. " EQ" 
-
-    conditions.item_tbl.stat_time = tostring(tbl.begin_time) .. " EGT"
-    conditions.item_tbl.stat_time = tostring(tbl.end_time) .. " ELT"
+    conditions.item_tbl.building_level = tostring(0) .. " EQ" 
 
     local util = require "util"
     local num = util:table_length(conditions.item_tbl)
@@ -167,19 +156,16 @@ end
 -- #########################################################################################################
 function business:do_action(tbl)
     -- 封装查询条件和排序字段以及分页
-    local columns = { "building_id", "building_name", "sum(running_time) as running_time", "sum(human_time) as human_time", "sum(door_time) as door_time", "sum(window_time) as window_time" }
-    local conditions = business:make_conditions(tbl)
-    local order = business:make_order()
-    local group = business:make_group()
+    local columns = { "building_id", "building_name", "running_time", "human_time", "door_time", "window_time" }
 
     -- 查询
     local configure = require "configure"
     local dao = require "dao"
-    local table_name = configure.DBCService.DB .. ".v_building_stat"
+    local table_name = configure.DBCService.DB .. ".v_building_level_stat"
     local LOG = require "log"
     local cjson = require "cjson"
     LOG:DEBUG("query table:" .. table_name .. " value:" .. cjson.encode(tbl))
-    local result,info = dao:query(configure.DBCService, table_name, columns, conditions, nil, order, group)
+    local result,info = dao:query(configure.DBCService, table_name, columns)
     if false == result then
         LOG:ERROR("query table:" .. table_name .. " value:" .. cjson.encode(tbl) .. " failed msg:" .. info)
         return false,info
